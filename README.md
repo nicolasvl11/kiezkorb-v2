@@ -1,6 +1,6 @@
-# Kiezkorb v2 (Week 4, redesigned prototype)
+# GUI Design & Web Optimization
 
-GUI Design & Web Optimization, Cycle 1, Personal Product.
+Kiezkorb v2, Week 4 redesigned prototype. Cycle 1, Personal Product.
 
 - Live build: https://bejewelled-bavarois-a884c2.netlify.app/
 - Live lo-fi: https://benevolent-phoenix-da0d32.netlify.app
