@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiezkorb lo-fi prototype</title>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#222; --mid:#888; --light:#e6e6e6; --paper:#fafafa; --note:#fff3a8; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:17px/1.35 "Patrick Hand", "Comic Sans MS", cursive; color:var(--ink); background:#d9d9d9; }
+  header { padding:20px 24px 4px; }
+  h1 { margin:0; font-size:28px; }
+  header p { margin:4px 0 0; color:#555; max-width:780px; }
+  .flow { display:flex; gap:44px; padding:24px; overflow-x:auto; align-items:flex-start; }
+  .step { flex:0 0 auto; width:300px; }
+  .step > h2 { font-size:18px; margin:0 0 8px; }
+  .phone { width:300px; height:560px; background:var(--paper); border:3px solid var(--ink); border-radius:26px; padding:14px; position:relative; overflow:hidden; display:flex; flex-direction:column; gap:10px; }
+  .bar { display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--ink); padding-bottom:8px; font-weight:bold; }
+  .box { border:2px solid var(--ink); border-radius:6px; padding:8px; background:#fff; }
+  .box.dash { border-style:dashed; color:var(--mid); }
+  .img { border:2px solid var(--ink); background:repeating-linear-gradient(45deg,#fff 0 8px,var(--light) 8px 9px); display:grid; place-items:center; color:var(--mid); }
+  .btn { border:2px solid var(--ink); border-radius:6px; padding:9px; text-align:center; font-weight:bold; background:#ddd; }
+  .btn.small { padding:4px 8px; display:inline-block; }
+  .chips { display:flex; gap:6px; flex-wrap:wrap; }
+  .chip { border:2px solid var(--ink); border-radius:99px; padding:1px 9px; font-size:15px; }
+  .chip.on { background:var(--ink); color:#fff; }
+  .row { display:flex; gap:8px; align-items:center; }
+  .grow { flex:1; }
+  .card { display:flex; gap:8px; border:2px solid var(--ink); border-radius:6px; padding:6px; background:#fff; }
+  .card .img { width:78px; height:78px; flex:0 0 auto; }
+  .muted { color:var(--mid); font-size:15px; }
+  .tabs { margin-top:auto; display:flex; border-top:2px solid var(--ink); padding-top:8px; text-align:center; }
+  .tabs span { flex:1; } .tabs .on { font-weight:bold; text-decoration:underline; }
+  .toast { position:absolute; left:14px; right:14px; bottom:60px; background:var(--ink); color:#fff; border-radius:6px; padding:8px 10px; display:flex; justify-content:space-between; }
+  .note { position:absolute; background:var(--note); border:1.5px solid #b9a400; padding:5px 8px; font-size:15px; width:200px; transform:rotate(-1.5deg); box-shadow:2px 2px 0 #0002; z-index:2; }
+  .step .why { margin-top:12px; background:var(--note); border:1.5px solid #b9a400; padding:8px 10px; font-size:16px; }
+  .why b { display:block; }
+  .arrow { align-self:center; font-size:34px; color:#555; flex:0 0 auto; margin:0 -26px; }
+  .prog { display:flex; gap:4px; } .prog i { flex:1; height:6px; border:1.5px solid var(--ink); border-radius:3px; } .prog i.on { background:var(--ink); }
+  .legend { padding:0 24px 24px; color:#555; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Kiezkorb v2 · lo-fi prototype</h1>
+  <p>Mobile-first, because the research says sharing happens in daily phone life, not at a desk. Yellow notes tie each decision to the research. Flow: find → ask → offer → manage.</p>
+</header>
+
+<div class="flow">
+
+  <!-- 1 FEED -->
+  <div class="step">
+    <h2>1 · Feed</h2>
+    <div class="phone">
+      <div class="bar"><span>kiezkorb</span><span class="muted">Haus B, Kreuzberg</span></div>
+      <div class="chips"><span class="chip on">My building (3)</span><span class="chip">Nearby (9)</span></div>
+      <div class="row"><div class="box grow muted">search food…</div><div class="box">Filter</div></div>
+      <div class="card"><div class="img">photo</div><div class="grow"><b>Pumpkin soup</b><div class="muted">2 jars · ready today</div><div class="row"><span class="chip">Sealed</span><span class="chip">Contains: none known</span></div><div class="muted">Mara · 2nd floor · 3 hrs</div></div></div>
+      <div class="card"><div class="img">photo</div><div class="grow"><b>Focaccia</b><div class="muted">½ tray · baked today</div><div class="row"><span class="chip">Gluten</span></div><div class="muted">Lena · 4th floor · 5 hrs</div></div></div>
+      <div class="btn" style="border-radius:99px">+ Offer food</div>
+      <div class="tabs"><span class="on">Feed</span><span>My offers</span><span>Requests</span></div>
+      <div class="note" style="top:96px;right:-6px">Building scope first: you see people you might know</div>
+    </div>
+    <div class="why"><b>Why</b>P1: "I never find out about food that people give away near me." Small circle (building) before the whole neighborhood. Real counts, no fake LIVE.</div>
+  </div>
+  <div class="arrow">→</div>
+
+  <!-- 2 DETAIL -->
+  <div class="step">
+    <h2>2 · Offer detail</h2>
+    <div class="phone">
+      <div class="bar"><span>← Back</span><span class="muted">Pumpkin soup</span></div>
+      <div class="img" style="height:140px">BIG photo</div>
+      <div class="box"><b>Condition</b><div class="chips"><span class="chip">Made today</span><span class="chip">Sealed jar</span></div></div>
+      <div class="box"><b>Allergens</b> <span class="chip">None known</span><div class="muted">Vegan · coconut, ginger</div></div>
+      <div class="box row"><div class="img" style="width:40px;height:40px;border-radius:50%">M</div><div class="grow"><b>Mara</b><div class="muted">2nd floor, Haus B · 6 shares</div></div></div>
+      <div class="btn">Ask to pick up</div>
+      <div class="muted" style="text-align:center">Your email stays private</div>
+      <div class="note" style="top:196px;right:-6px">Trust cues above the button: look of the food + who gives it</div>
+    </div>
+    <div class="why"><b>Why</b>P1: trust and the look of the food decide if she takes it. Photo, condition and neighbor identity come before contact. No public email.</div>
+  </div>
+  <div class="arrow">→</div>
+
+  <!-- 3 REQUEST -->
+  <div class="step">
+    <h2>3 · Ask to pick up</h2>
+    <div class="phone">
+      <div class="bar"><span>← Back</span><span class="muted">Ask Mara</span></div>
+      <div class="box"><b>Quick message</b>
+        <div class="chips" style="margin-top:6px"><span class="chip on">Can I come now?</span><span class="chip">In 1 hr</span><span class="chip">Tonight</span></div></div>
+      <div class="box dash" style="height:70px">optional note…</div>
+      <div class="btn">Send request</div>
+      <div class="box" style="margin-top:6px"><b>Request sent ✓</b><div class="muted">Mara gets a notification. Pickup spot is shown once she accepts.</div></div>
+      <div class="box"><b>Status</b><div class="row"><span class="chip on">Sent</span>→<span class="chip">Accepted</span>→<span class="chip">Picked up</span></div></div>
+      <div class="toast"><span>Request sent to Mara</span><span>OK</span></div>
+      <div class="note" style="top:96px;right:-6px">Visible status at every step (H1)</div>
+    </div>
+    <div class="why"><b>Why</b>Week 2 H1 + H4: confirmation you can see, no email exposed. Strange-feeling exchange gets a soft script ("Can I come now?").</div>
+  </div>
+  <div class="arrow">→</div>
+
+  <!-- 4 POST -->
+  <div class="step">
+    <h2>4 · Offer food (3 steps)</h2>
+    <div class="phone">
+      <div class="bar"><span>✕</span><span>Offer food</span><span class="muted">1/3</span></div>
+      <div class="prog"><i class="on"></i><i></i><i></i></div>
+      <div class="img" style="height:150px">📷 take photo</div>
+      <div class="box dash">What is it? e.g. Pumpkin soup</div>
+      <div class="muted">Or repeat a past offer:</div>
+      <div class="chips"><span class="chip">Focaccia</span><span class="chip">Apples</span></div>
+      <div class="muted">Step 2: condition + allergens (required)<br>Step 3: when + where, then Post</div>
+      <div class="btn" style="margin-top:auto">Next</div>
+      <div class="note" style="top:150px;right:-6px">Photo first, one thing per screen: under 30 seconds</div>
+    </div>
+    <div class="why"><b>Why</b>P1: throws food away, no easy way to offer it. Lower effort. Allergens + condition are required (H4, trust).</div>
+  </div>
+  <div class="arrow">→</div>
+
+  <!-- 5 MY OFFERS -->
+  <div class="step">
+    <h2>5 · My offers</h2>
+    <div class="phone">
+      <div class="bar"><span>My offers</span><span class="muted">2 active</span></div>
+      <div class="card"><div class="img">photo</div><div class="grow"><b>Pumpkin soup</b><div class="muted">3 hrs left · 1 request</div><div class="row"><span class="btn small">Accept Ana</span><span class="btn small">Taken</span></div></div></div>
+      <div class="card"><div class="img">photo</div><div class="grow"><b>Apples</b><div class="muted">8 hrs left · no requests</div><div class="row"><span class="btn small">Taken</span><span class="btn small">Delete</span></div></div></div>
+      <div class="box"><b>Share in your building group</b><div class="muted">Send link by WhatsApp</div></div>
+      <div class="tabs"><span>Feed</span><span class="on">My offers</span><span>Requests</span></div>
+      <div class="toast"><span>Marked as taken</span><span><u>Undo</u></span></div>
+      <div class="note" style="top:96px;right:-6px">Mark taken / delete with undo (H3)</div>
+    </div>
+    <div class="why"><b>Why</b>Week 2 H3: no way to edit or close a listing. WhatsApp link: P1 never finds out about offers, so push them to chats people already use.</div>
+  </div>
+
+</div>
+<p class="legend">Not tested yet with a second user. Only one interview (P1, Pereira, Colombia) so far.</p>
+</body>
+</html>

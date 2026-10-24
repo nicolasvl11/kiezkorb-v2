@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f3eb">
+<meta name="description" content="Share surplus food with neighbors in your building and street, with photos, allergens and no public email.">
+<title>Kiezkorb v2 · good food, close by</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+  :root { --paper:#f5f3eb; --surface:#fffefa; --ink:#202b25; --muted:#5f6a62; --line:#dedfd5; --green:#285b43; --green-soft:#e5eee4; --tomato:#c4472f; --warn:#fbf3d9; --radius:10px; font-family:"DM Sans",sans-serif; }
+  * { box-sizing:border-box; }
+  body { margin:0; color:var(--ink); background:var(--paper); min-height:100vh; }
+  button, input, select, textarea { font:inherit; color:inherit; }
+  .app { width:min(560px,100%); margin:0 auto; padding:0 16px 96px; }
+  header { display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-bottom:1px solid var(--line); }
+  .brand { display:flex; gap:9px; align-items:center; font:600 21px "Fraunces",serif; }
+  .mark { width:34px; height:34px; border-radius:50%; background:var(--green); color:#fff; display:grid; place-items:center; }
+  .where { font-size:13px; color:var(--muted); } .where b { color:var(--ink); }
+  h1 { font:500 30px/1.1 "Fraunces",serif; margin:20px 0 4px; }
+  h2 { font-size:16px; margin:0; }
+  .sub { color:var(--muted); font-size:14px; margin:0 0 14px; }
+  .seg { display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:4px; background:#e9e8dc; border-radius:99px; margin-bottom:12px; }
+  .seg button { border:0; background:transparent; min-height:40px; border-radius:99px; font-weight:600; font-size:14px; cursor:pointer; color:var(--muted); }
+  .seg button[aria-pressed="true"] { background:var(--green); color:#fff; }
+  .tools { display:flex; gap:8px; margin-bottom:10px; }
+  input[type=search], .field input[type=text], .field textarea, .field select { width:100%; min-height:44px; padding:10px 12px; border:1px solid #c9cbbf; border-radius:8px; background:#fff; font-size:15px; }
+  .chips { display:flex; gap:7px; overflow-x:auto; padding:2px 0 10px; }
+  .chip { flex:0 0 auto; min-height:36px; padding:0 14px; border:1px solid #bfc3b6; border-radius:99px; background:transparent; font-size:13px; cursor:pointer; }
+  .chip[aria-pressed="true"] { background:var(--green); border-color:var(--green); color:#fff; }
+  .count { font-size:13px; color:var(--muted); margin:2px 0 10px; }
+  .list { display:grid; gap:12px; }
+  .card { display:grid; grid-template-columns:112px 1fr; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; text-align:left; width:100%; padding:0; cursor:pointer; }
+  .card .ph { width:100%; height:100%; min-height:132px; object-fit:cover; background:#ded8c4; display:grid; place-items:center; font-size:34px; }
+  .card .bd { padding:12px; display:grid; gap:5px; align-content:start; }
+  .card h3 { margin:0; font:600 19px/1.15 "Fraunces",serif; }
+  .meta { font-size:13px; color:var(--muted); }
+  .tags { display:flex; flex-wrap:wrap; gap:5px; }
+  .tag { font-size:12px; font-weight:600; padding:3px 8px; border-radius:99px; background:var(--green-soft); color:var(--green); }
+  .tag.al { background:#fae9e3; color:#8f3a28; } .tag.time { background:var(--warn); color:#6a5518; }
+  .fab { position:fixed; right:max(16px,calc(50% - 264px)); bottom:76px; min-height:52px; padding:0 22px; border:0; border-radius:99px; background:var(--green); color:#fff; font-weight:700; font-size:15px; box-shadow:0 6px 18px #1c3a2a55; cursor:pointer; }
+  nav { position:fixed; left:0; right:0; bottom:0; background:var(--surface); border-top:1px solid var(--line); }
+  nav div { width:min(560px,100%); margin:0 auto; display:grid; grid-template-columns:repeat(3,1fr); }
+  nav button { min-height:56px; border:0; background:none; font-size:13px; font-weight:600; color:var(--muted); cursor:pointer; }
+  nav button[aria-current="page"] { color:var(--green); box-shadow:inset 0 3px 0 var(--green); }
+  .badge { display:inline-block; min-width:18px; padding:0 5px; margin-left:4px; border-radius:99px; background:var(--tomato); color:#fff; font-size:11px; }
+  .btn { min-height:48px; padding:0 18px; border:0; border-radius:8px; background:var(--green); color:#fff; font-weight:700; font-size:15px; cursor:pointer; }
+  .btn.sec { background:transparent; border:1px solid #b5b9ac; color:var(--ink); }
+  .btn.sm { min-height:40px; font-size:13px; padding:0 12px; }
+  .btn:disabled { opacity:.45; cursor:not-allowed; }
+  :focus-visible { outline:3px solid #6f9a82; outline-offset:2px; }
+  dialog { width:min(520px,calc(100% - 20px)); max-height:92vh; padding:0; border:1px solid var(--line); border-radius:14px; background:var(--surface); color:var(--ink); }
+  dialog::backdrop { background:#15251e99; }
+  .dlg { padding:18px; display:grid; gap:14px; }
+  .dh { display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .dh h2 { font:600 23px "Fraunces",serif; }
+  .x { width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:none; font-size:20px; cursor:pointer; }
+  .hero { width:100%; height:200px; object-fit:cover; border-radius:10px; background:#ded8c4; display:grid; place-items:center; font-size:60px; }
+  .box { border:1px solid var(--line); border-radius:10px; padding:12px; background:#fbfaf5; display:grid; gap:6px; font-size:14px; }
+  .box b { font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:var(--green); }
+  .giver { display:flex; gap:10px; align-items:center; }
+  .av { width:42px; height:42px; border-radius:50%; background:#e6d7bf; display:grid; place-items:center; font-weight:700; }
+  .field { display:grid; gap:6px; } .field > label, .field > legend { font-size:13px; font-weight:700; }
+  fieldset.field { border:0; padding:0; margin:0; }
+  .opts { display:flex; flex-wrap:wrap; gap:8px; }
+  .opts label { display:inline-flex; align-items:center; min-height:44px; padding:0 14px; border:1px solid #bfc3b6; border-radius:99px; font-size:14px; cursor:pointer; }
+  .opts input { position:absolute; opacity:0; }
+  .opts label:has(input:checked) { background:var(--green); border-color:var(--green); color:#fff; }
+  .opts label:has(input:focus-visible) { outline:3px solid #6f9a82; outline-offset:2px; }
+  .hint { font-size:12px; color:var(--muted); margin:0; } .err { font-size:12px; color:var(--tomato); margin:0; min-height:16px; }
+  .prog { display:grid; grid-template-columns:repeat(3,1fr); gap:5px; } .prog i { height:5px; border-radius:3px; background:#d8dacd; } .prog i.on { background:var(--green); }
+  .photo-pick { display:grid; place-items:center; gap:4px; min-height:150px; border:2px dashed #b5b9ac; border-radius:10px; cursor:pointer; text-align:center; color:var(--muted); font-size:14px; background-size:cover; background-position:center; }
+  .photo-pick.has { color:transparent; border-style:solid; }
+  .row { display:flex; gap:8px; justify-content:flex-end; }
+  .steps { display:flex; gap:6px; flex-wrap:wrap; font-size:13px; }
+  .steps span { padding:4px 10px; border-radius:99px; background:#e9e8dc; color:var(--muted); } .steps .on { background:var(--green); color:#fff; font-weight:700; }
+  .toast { position:fixed; left:50%; bottom:130px; transform:translateX(-50%); width:min(440px,calc(100% - 32px)); background:var(--ink); color:#fff; padding:12px 14px; border-radius:10px; display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:14px; z-index:50; }
+  .toast button { background:none; border:0; color:#9fd3b5; font-weight:700; cursor:pointer; min-height:36px; }
+  .empty { padding:30px 16px; border:1px dashed #c3c6b9; border-radius:10px; text-align:center; color:var(--muted); }
+  .empty b { display:block; color:var(--ink); margin-bottom:4px; }
+  .ow { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:12px; display:grid; gap:10px; }
+  .ow-top { display:flex; gap:10px; align-items:center; } .ow-top img, .ow-top .ph { width:56px; height:56px; border-radius:8px; object-fit:cover; background:#ded8c4; display:grid; place-items:center; font-size:24px; flex:0 0 auto; }
+  .req { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px 10px; background:var(--warn); border-radius:8px; font-size:13px; }
+  footer { margin-top:28px; font-size:12px; color:var(--muted); }
+  .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+  @media (prefers-reduced-motion:reduce) { * { transition:none !important; animation:none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand"><span class="mark" aria-hidden="true">k</span>kiezkorb</div>
+    <div class="where">Haus B · <b>Kreuzberg</b></div>
+  </header>
+  <main id="main" tabindex="-1"></main>
+  <footer>Demo: data is stored on this device only. Requests are simulated, no real messages are sent.</footer>
+</div>
+
+<button class="fab" id="fab" type="button">+ Offer food</button>
+<nav aria-label="Main"><div>
+  <button data-view="feed" type="button">Feed</button>
+  <button data-view="mine" type="button">My offers<span id="b-mine"></span></button>
+  <button data-view="reqs" type="button">Requests<span id="b-reqs"></span></button>
+</div></nav>
+
+<dialog id="detail" aria-labelledby="d-title"></dialog>
+<dialog id="wizard" aria-labelledby="w-title"></dialog>
+<div id="toast-host" role="status" aria-live="polite"></div>
+
+<script>
+const KEY = "kiezkorb-v2";
+const H = 3600000;
+const IMG = {
+  tom:"https://images.unsplash.com/photo-1546094096-0df4bcaaa337?auto=format&fit=crop&w=600&q=70",
+  foc:"https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=70",
+  soup:"https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?auto=format&fit=crop&w=600&q=70",
+  app:"https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=600&q=70",
+  chk:"https://images.unsplash.com/photo-1515543904379-3d757afe72e4?auto=format&fit=crop&w=600&q=70"
+};
+const EMOJI = { Produce:"🥬", Prepared:"🍲", Bakery:"🥖", Pantry:"🥫" };
+const ALLERGENS = ["Gluten","Milk","Eggs","Nuts","Peanuts","Soy","Fish","Celery"];
+const CONDITIONS = ["Made today","Sealed / packed","Fresh, unopened","Some marks, fine inside"];
+const MSGS = ["Can I come now?","I can come in 1 hour","I can come tonight"];
+
+const seed = () => {
+  const now = Date.now();
+  return { offers:[
+    { id:"s1", name:"Pumpkin soup", category:"Prepared", amount:"2 jars", condition:"Made today", allergens:[], pickup:"Haus B, ground floor door", scope:"building", owner:"You", floor:"2nd floor", shares:6, mine:true, expiresAt:now+3*H, image:IMG.soup, status:"active", requests:[{ id:"r1", from:"Ana, 4th floor", msg:"Can I come now?", status:"pending" }] },
+    { id:"s2", name:"Rosemary focaccia", category:"Bakery", amount:"Half a tray", condition:"Made today", allergens:["Gluten"], pickup:"Haus B, 4th floor landing", scope:"building", owner:"Lena", floor:"4th floor", shares:11, expiresAt:now+5*H, image:IMG.foc, status:"active", requests:[] },
+    { id:"s3", name:"Balcony tomatoes", category:"Produce", amount:"8 tomatoes", condition:"Fresh, unopened", allergens:[], pickup:"Haus B, bike room", scope:"building", owner:"Amir", floor:"1st floor", shares:3, expiresAt:now+1*H, image:IMG.tom, status:"active", requests:[] },
+    { id:"s4", name:"Garden apples", category:"Produce", amount:"1 bag", condition:"Some marks, fine inside", allergens:[], pickup:"Görlitzer Park, main gate", scope:"nearby", owner:"Jonas", floor:"Görlitzer Kiez", shares:2, expiresAt:now+8*H, image:IMG.app, status:"active", requests:[] },
+    { id:"s5", name:"Cooked chickpeas", category:"Prepared", amount:"3 portions", condition:"Made today", allergens:["Celery"], pickup:"Kottbusser Tor, café entrance", scope:"nearby", owner:"Sami", floor:"Kotti Kiez", shares:4, expiresAt:now+6*H, image:IMG.chk, status:"active", requests:[] }
+  ], myReqs:[] };
+};
+let S; try { S = JSON.parse(localStorage.getItem(KEY)) || seed(); } catch { S = seed(); }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* app works without storage */ } };
+let view = "feed", scope = "building", cat = "All", q = "", lastUndo = null;
+
+const $ = (s) => document.querySelector(s);
+const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const left = (o) => Math.max(0, Math.ceil((o.expiresAt - Date.now()) / H));
+const alive = (o) => o.status === "active" && o.expiresAt > Date.now();
+const timeTxt = (o) => `${left(o)} ${left(o) === 1 ? "hr" : "hrs"} left`;
+const photo = (o, cls) => o.image ? `<img class="${cls}" src="${esc(o.image)}" alt="${esc(o.name)}" loading="lazy">` : `<div class="${cls}" role="img" aria-label="${esc(o.name)} (no photo)">${EMOJI[o.category] || "🍽"}</div>`;
+const allergenTags = (o) => o.allergens.length ? o.allergens.map((a) => `<span class="tag al">${esc(a)}</span>`).join("") : `<span class="tag">No known allergens</span>`;
+
+function toast(msg, undo) {
+  const host = $("#toast-host");
+  host.innerHTML = `<div class="toast"><span>${esc(msg)}</span>${undo ? '<button type="button" id="undo">Undo</button>' : ""}</div>`;
+  if (undo) $("#undo").onclick = () => { undo(); host.innerHTML = ""; };
+  clearTimeout(toast.t); toast.t = setTimeout(() => { host.innerHTML = ""; }, 6000);
+}
+
+/* ---------- views ---------- */
+function renderFeed() {
+  const all = S.offers.filter(alive);
+  const inScope = (s) => all.filter((o) => (s === "building" ? o.scope === "building" : true));
+  const list = inScope(scope).filter((o) => (cat === "All" || o.category === cat) && `${o.name} ${o.pickup} ${o.category}`.toLowerCase().includes(q.toLowerCase()))
+    .sort((a, b) => a.expiresAt - b.expiresAt);
+  return `
+    <h1>Good food, close by.</h1>
+    <p class="sub">Start with your own building. Widen to the street when nothing is there.</p>
+    <div class="seg" role="group" aria-label="Where to look">
+      <button type="button" data-scope="building" aria-pressed="${scope === "building"}">My building (${inScope("building").length})</button>
+      <button type="button" data-scope="nearby" aria-pressed="${scope === "nearby"}">Nearby (${inScope("nearby").length})</button>
+    </div>
+    <div class="tools"><input type="search" id="q" value="${esc(q)}" placeholder="Search food" aria-label="Search food"></div>
+    <div class="chips" role="group" aria-label="Category">${["All","Produce","Prepared","Bakery","Pantry"].map((c) => `<button class="chip" type="button" data-cat="${c}" aria-pressed="${cat === c}">${c}</button>`).join("")}</div>
+    <div class="count" aria-live="polite">${list.length} ${list.length === 1 ? "offer" : "offers"}, soonest to expire first</div>
+    <div class="list">${list.map(card).join("") || `<div class="empty"><b>${scope === "building" ? "Nothing in your building yet" : "Nothing nearby yet"}</b>${scope === "building" ? "Try Nearby, or be the first to offer something." : "Try another search or offer something."}</div>`}</div>`;
+}
+const card = (o) => `
+  <button class="card" type="button" data-open="${o.id}" aria-label="${esc(o.name)}, ${esc(o.amount)}, ${timeTxt(o)}">
+    ${photo(o, "ph")}
+    <div class="bd">
+      <h3>${esc(o.name)}</h3>
+      <div class="meta">${esc(o.amount)} · ${esc(o.condition)}</div>
+      <div class="tags">${allergenTags(o)}</div>
+      <div class="meta">${o.mine ? "Your offer" : `${esc(o.owner)} · ${esc(o.floor)}`} · <span class="tag time">${timeTxt(o)}</span></div>
+    </div>
+  </button>`;
+
+function renderMine() {
+  const mine = S.offers.filter((o) => o.mine && alive(o));
+  return `<h1>My offers</h1><p class="sub">${mine.length} active. Close an offer as soon as the food is gone.</p>
+  <div class="list">${mine.map((o) => {
+    const pend = o.requests.filter((r) => r.status === "pending");
+    const acc = o.requests.find((r) => r.status === "accepted");
+    return `<div class="ow"><div class="ow-top">${photo(o, "ph")}<div><b>${esc(o.name)}</b><div class="meta">${esc(o.amount)} · ${timeTxt(o)}</div></div></div>
+      ${pend.map((r) => `<div class="req"><span><b>${esc(r.from)}</b>: "${esc(r.msg)}"</span><button class="btn sm" type="button" data-accept="${o.id}|${r.id}">Accept</button></div>`).join("")}
+      ${acc ? `<div class="req" style="background:var(--green-soft)">Accepted: ${esc(acc.from)}. They will see your pickup spot.</div>` : ""}
+      ${!o.requests.length ? '<div class="meta">No requests yet.</div>' : ""}
+      <div class="row" style="justify-content:flex-start;flex-wrap:wrap">
+        <button class="btn sm" type="button" data-taken="${o.id}">Mark as taken</button>
+        <a class="btn sm sec" style="display:inline-flex;align-items:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(`Free food in our building: ${o.name} (${o.amount}), ${timeTxt(o)}. Ask on Kiezkorb.`)}">Share on WhatsApp</a>
+        <button class="btn sm sec" type="button" data-del="${o.id}">Delete</button>
+      </div></div>`;
+  }).join("") || '<div class="empty"><b>No active offers</b>Tap "Offer food" to share something in under a minute.</div>'}</div>`;
+}
+
+function renderReqs() {
+  const items = S.myReqs.map((r) => ({ r, o: S.offers.find((x) => x.id === r.offerId) })).filter((x) => x.o);
+  const order = ["pending","accepted","picked"];
+  const label = { pending:"Sent", accepted:"Accepted", picked:"Picked up" };
+  return `<h1>My requests</h1><p class="sub">Pickup spot appears once the neighbor accepts.</p>
+  <div class="list">${items.map(({ r, o }) => `<div class="ow"><div class="ow-top">${photo(o, "ph")}<div><b>${esc(o.name)}</b><div class="meta">${esc(o.owner)} · ${esc(o.floor)}</div></div></div>
+    <div class="steps" aria-label="Status: ${label[r.status]}">${order.map((s) => `<span class="${r.status === s ? "on" : ""}">${label[s]}</span>`).join("")}</div>
+    ${r.status === "pending" ? '<div class="meta">Waiting for the answer (the demo accepts after a few seconds).</div>' : `<div class="box"><b>Pickup</b>${esc(o.pickup)}</div>`}
+    ${r.status === "accepted" ? `<button class="btn sm" type="button" data-picked="${r.id}">I picked it up</button>` : ""}
+  </div>`).join("") || '<div class="empty"><b>No requests yet</b>Open an offer and tap "Ask to pick up".</div>'}</div>`;
+}
+
+function render() {
+  $("#main").innerHTML = view === "feed" ? renderFeed() : view === "mine" ? renderMine() : renderReqs();
+  document.querySelectorAll("nav button").forEach((b) => { if (b.dataset.view === view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+  const pend = S.offers.filter((o) => o.mine && alive(o)).reduce((n, o) => n + o.requests.filter((r) => r.status === "pending").length, 0);
+  $("#b-mine").innerHTML = pend ? `<span class="badge" aria-label="${pend} new requests">${pend}</span>` : "";
+  const acc = S.myReqs.filter((r) => r.status === "accepted").length;
+  $("#b-reqs").innerHTML = acc ? `<span class="badge" aria-label="${acc} accepted">${acc}</span>` : "";
+  $("#fab").hidden = view === "reqs";
+}
+
+/* ---------- detail + request ---------- */
+function openDetail(id) {
+  const o = S.offers.find((x) => x.id === id); if (!o) return;
+  const mineReq = S.myReqs.find((r) => r.offerId === id);
+  const d = $("#detail");
+  d.innerHTML = `<div class="dlg">
+    <div class="dh"><h2 id="d-title">${esc(o.name)}</h2><button class="x" type="button" data-close aria-label="Close">×</button></div>
+    ${photo(o, "hero")}
+    <div class="tags"><span class="tag time">${timeTxt(o)}</span><span class="tag">${esc(o.amount)}</span></div>
+    <div class="box"><b>Condition</b>${esc(o.condition)}</div>
+    <div class="box"><b>Allergens</b><div class="tags">${allergenTags(o)}</div></div>
+    <div class="box giver"><span class="av" aria-hidden="true">${esc(o.owner[0])}</span><div><b style="text-transform:none;letter-spacing:0;font-size:15px;color:var(--ink)">${o.mine ? "You" : esc(o.owner)}</b><div class="meta">${esc(o.floor)} · ${o.shares} shares so far</div></div></div>
+    ${o.mine ? '<p class="hint">This is your offer. Manage it in "My offers".</p>'
+      : mineReq ? '<p class="hint">You already asked for this. See "Requests".</p>'
+      : `<form id="req-form" class="dlg" style="padding:0"><fieldset class="field"><legend>Say when you can come</legend><div class="opts">${MSGS.map((m, i) => `<label><input type="radio" name="msg" value="${esc(m)}" ${i === 0 ? "checked" : ""}>${esc(m)}</label>`).join("")}</div></fieldset>
+        <button class="btn" type="submit">Ask to pick up</button><p class="hint">Your email and phone stay private. ${esc(o.owner)} only sees your first name and floor.</p></form>`}
+  </div>`;
+  d.showModal();
+  const f = $("#req-form");
+  if (f) f.onsubmit = (e) => {
+    e.preventDefault();
+    const r = { id:"q" + Date.now(), offerId:id, msg:new FormData(f).get("msg"), status:"pending" };
+    S.myReqs.unshift(r); save(); d.close(); view = "reqs"; render();
+    toast(`Request sent to ${o.owner}`);
+    setTimeout(() => { r.status = "accepted"; save(); render(); toast(`${o.owner} accepted. Pickup spot is now visible.`); }, 4000);
+  };
+}
+
+/* ---------- wizard ---------- */
+let W;
+function openWizard() { W = { step:1, photo:"", name:"", category:"Prepared", amount:"", condition:"", allergens:[], none:false, hours:4, pickup:"", scope:"building" }; drawWizard(); $("#wizard").showModal(); }
+function drawWizard() {
+  const w = $("#wizard"), s = W.step;
+  const recent = [...new Set(S.offers.filter((o) => o.mine).map((o) => o.name))].slice(0, 3);
+  w.innerHTML = `<form class="dlg" id="wf" novalidate>
+    <div class="dh"><h2 id="w-title">Offer food · ${s}/3</h2><button class="x" type="button" data-close aria-label="Close">×</button></div>
+    <div class="prog" aria-hidden="true">${[1,2,3].map((n) => `<i class="${n <= s ? "on" : ""}"></i>`).join("")}</div>
+    ${s === 1 ? `
+      <label class="photo-pick ${W.photo ? "has" : ""}" style="${W.photo ? `background-image:url('${W.photo}')` : ""}"><input class="sr" type="file" id="ph" accept="image/*" capture="environment"><span>${W.photo ? "Photo added" : "📷 Take or choose a photo<br><small>Neighbors trust what they can see</small>"}</span></label>
+      <div class="field"><label for="n">What is it?</label><input type="text" id="n" maxlength="50" value="${esc(W.name)}" placeholder="e.g. Pumpkin soup" autocomplete="off"></div>
+      ${recent.length ? `<div class="field"><span class="hint">Offer something again:</span><div class="opts">${recent.map((r) => `<button class="chip" type="button" data-again="${esc(r)}">${esc(r)}</button>`).join("")}</div></div>` : ""}
+      <div class="field"><label for="a">How much?</label><input type="text" id="a" maxlength="30" value="${esc(W.amount)}" placeholder="e.g. 2 jars"></div>
+      <div class="field"><label for="c">Type</label><select id="c">${Object.keys(EMOJI).map((c) => `<option ${c === W.category ? "selected" : ""}>${c}</option>`).join("")}</select></div>` : ""}
+    ${s === 2 ? `
+      <fieldset class="field"><legend>Condition (required)</legend><div class="opts">${CONDITIONS.map((c) => `<label><input type="radio" name="cond" value="${esc(c)}" ${W.condition === c ? "checked" : ""}>${esc(c)}</label>`).join("")}</div></fieldset>
+      <fieldset class="field"><legend>Allergens (required)</legend><div class="opts">
+        <label><input type="checkbox" id="none" ${W.none ? "checked" : ""}>None known</label>
+        ${ALLERGENS.map((a) => `<label><input type="checkbox" name="al" value="${a}" ${W.allergens.includes(a) ? "checked" : ""} ${W.none ? "disabled" : ""}>${a}</label>`).join("")}</div>
+        <p class="hint">Pick every allergen it contains, or "None known". Neighbors rely on this.</p></fieldset>` : ""}
+    ${s === 3 ? `
+      <div class="field"><label for="h">Available for</label><select id="h">${[2,4,8,24].map((h) => `<option value="${h}" ${W.hours === h ? "selected" : ""}>${h} hours</option>`).join("")}</select></div>
+      <div class="field"><label for="p">Pickup spot</label><input type="text" id="p" maxlength="60" value="${esc(W.pickup)}" placeholder="e.g. Haus B, ground floor door"><p class="hint">Only shown to the neighbor you accept.</p></div>
+      <fieldset class="field"><legend>Who can see it?</legend><div class="opts">
+        <label><input type="radio" name="sc" value="building" ${W.scope === "building" ? "checked" : ""}>My building</label>
+        <label><input type="radio" name="sc" value="nearby" ${W.scope === "nearby" ? "checked" : ""}>Nearby too</label></div></fieldset>
+      <p class="hint">No email needed. Requests come to you inside the app.</p>` : ""}
+    <p class="err" id="err" role="alert"></p>
+    <div class="row">${s > 1 ? '<button class="btn sec" type="button" id="back">Back</button>' : ""}<button class="btn" type="submit">${s === 3 ? "Post offer" : "Next"}</button></div></form>`;
+  const f = $("#wf");
+  const err = (m) => { $("#err").textContent = m; };
+  if (s === 1) {
+    $("#ph").onchange = (e) => {
+      const file = e.target.files[0]; if (!file) return;
+      const img = new Image(), url = URL.createObjectURL(file);
+      img.onload = () => { const c = document.createElement("canvas"), k = Math.min(1, 640 / img.width); c.width = img.width * k; c.height = img.height * k; c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); W.photo = c.toDataURL("image/jpeg", .7); URL.revokeObjectURL(url); readStep1(); drawWizard(); };
+      img.src = url;
+    };
+    f.querySelectorAll("[data-again]").forEach((b) => b.onclick = () => { readStep1(); W.name = b.dataset.again; const p = S.offers.find((o) => o.mine && o.name === W.name); if (p) { W.amount = p.amount; W.category = p.category; W.photo = p.image || W.photo; } drawWizard(); });
+  }
+  if (s === 2) $("#none").onchange = (e) => { W.none = e.target.checked; if (W.none) W.allergens = []; readStep2(); drawWizard(); };
+  if (s > 1) $("#back").onclick = () => { read(); W.step--; drawWizard(); };
+  f.onsubmit = (e) => {
+    e.preventDefault(); read();
+    if (s === 1 && !W.name.trim()) return err("Tell neighbors what it is.");
+    if (s === 1 && !W.amount.trim()) return err("Add an amount, like \"2 jars\".");
+    if (s === 2 && !W.condition) return err("Choose the condition of the food.");
+    if (s === 2 && !W.none && !W.allergens.length) return err("Choose the allergens, or \"None known\".");
+    if (s === 3 && !W.pickup.trim()) return err("Add a pickup spot.");
+    if (s < 3) { W.step++; drawWizard(); return; }
+    const o = { id:"o" + Date.now(), name:W.name.trim(), category:W.category, amount:W.amount.trim(), condition:W.condition, allergens:W.allergens, pickup:W.pickup.trim(), scope:W.scope, owner:"You", floor:"Your offer", shares:6, mine:true, expiresAt:Date.now() + W.hours * H, image:W.photo, status:"active", requests:[] };
+    S.offers.unshift(o); save(); w.close(); view = "mine"; render();
+    toast(`"${o.name}" is live for ${W.hours} hours`);
+  };
+  function readStep1() { if (!$("#n")) return; W.name = $("#n").value; W.amount = $("#a").value; W.category = $("#c").value; }
+  function readStep2() { const c = f.querySelector("[name=cond]:checked"); if (c) W.condition = c.value; if (!W.none) W.allergens = [...f.querySelectorAll("[name=al]:checked")].map((x) => x.value); }
+  function read() { if (s === 1) readStep1(); if (s === 2) readStep2(); if (s === 3) { W.hours = Number($("#h").value); W.pickup = $("#p").value; W.scope = f.querySelector("[name=sc]:checked").value; } }
+  const first = f.querySelector("input:not(.sr),select"); if (first) first.focus({ preventScroll:true });
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("button, a"); if (!t) return;
+  if (t.dataset.close !== undefined) t.closest("dialog").close();
+  else if (t.dataset.view) { view = t.dataset.view; render(); window.scrollTo(0, 0); }
+  else if (t.dataset.scope) { scope = t.dataset.scope; render(); }
+  else if (t.dataset.cat) { cat = t.dataset.cat; render(); }
+  else if (t.dataset.open) openDetail(t.dataset.open);
+  else if (t.id === "fab") openWizard();
+  else if (t.dataset.taken) {
+    const o = S.offers.find((x) => x.id === t.dataset.taken); o.status = "taken"; save(); render();
+    toast(`"${o.name}" marked as taken`, () => { o.status = "active"; save(); render(); });
+  } else if (t.dataset.del) {
+    const o = S.offers.find((x) => x.id === t.dataset.del); o.status = "deleted"; save(); render();
+    toast(`"${o.name}" deleted`, () => { o.status = "active"; save(); render(); });
+  } else if (t.dataset.accept) {
+    const [oid, rid] = t.dataset.accept.split("|"); const o = S.offers.find((x) => x.id === oid);
+    o.requests.forEach((r) => { if (r.id === rid) r.status = "accepted"; }); save(); render(); toast("Accepted. They can now see your pickup spot.");
+  } else if (t.dataset.picked) {
+    S.myReqs.find((r) => r.id === t.dataset.picked).status = "picked"; save(); render(); toast("Enjoy! Thank your neighbor.");
+  }
+});
+document.addEventListener("input", (e) => { if (e.target.id === "q") { q = e.target.value; const p = e.target.selectionStart; render(); const el = $("#q"); el.focus(); el.setSelectionRange(p, p); } });
+document.querySelectorAll("dialog").forEach((d) => d.addEventListener("click", (e) => { if (e.target === d) d.close(); }));
+setInterval(() => { if (!document.querySelector("dialog[open]") && document.activeElement.id !== "q") render(); }, 60000);
+render();
+</script>
+</body>
+</html>
