@@ -23,7 +23,7 @@
   .btn { border:2px solid var(--ink); border-radius:6px; padding:9px; text-align:center; font-weight:bold; background:#ddd; }
   .btn.small { padding:4px 8px; display:inline-block; }
   .chips { display:flex; gap:6px; flex-wrap:wrap; }
-  .chip { border:2px solid var(--ink); border-radius:99px; padding:1px 9px; font-size:15px; }
+  .chip { border:2px solid var(--ink); border-radius:99px; padding:1px 9px; font-size:15px; white-space:nowrap; }
   .chip.on { background:var(--ink); color:#fff; }
   .row { display:flex; gap:8px; align-items:center; }
   .grow { flex:1; }
@@ -56,13 +56,12 @@
       <div class="bar"><span>kiezkorb</span><span class="muted">Haus B, Kreuzberg</span></div>
       <div class="chips"><span class="chip on">My building (3)</span><span class="chip">Nearby (9)</span></div>
       <div class="row"><div class="box grow muted">search food…</div><div class="box">Filter</div></div>
-      <div class="card"><div class="img">photo</div><div class="grow"><b>Pumpkin soup</b><div class="muted">2 jars · ready today</div><div class="row"><span class="chip">Sealed</span><span class="chip">Contains: none known</span></div><div class="muted">Mara · 2nd floor · 3 hrs</div></div></div>
+      <div class="card"><div class="img">photo</div><div class="grow"><b>Pumpkin soup</b><div class="muted">2 jars · ready today</div><div class="row"><span class="chip">Sealed</span><span class="chip">No allergens</span></div><div class="muted">Mara · 2nd floor · 3 hrs</div></div></div>
       <div class="card"><div class="img">photo</div><div class="grow"><b>Focaccia</b><div class="muted">½ tray · baked today</div><div class="row"><span class="chip">Gluten</span></div><div class="muted">Lena · 4th floor · 5 hrs</div></div></div>
       <div class="btn" style="border-radius:99px">+ Offer food</div>
       <div class="tabs"><span class="on">Feed</span><span>My offers</span><span>Requests</span></div>
-      <div class="note" style="top:96px;right:-6px">Building scope first: you see people you might know</div>
     </div>
-    <div class="why"><b>Why</b>P1: "I never find out about food that people give away near me." Small circle (building) before the whole neighborhood. Real counts, no fake LIVE.</div>
+    <div class="why"><b>Note</b>Building scope first: you see people you might know<br><br><b>Why</b>P1: "I never find out about food that people give away near me." Small circle (building) before the whole neighborhood. Real counts, no fake LIVE.</div>
   </div>
   <div class="arrow">→</div>
 
@@ -77,9 +76,8 @@
       <div class="box row"><div class="img" style="width:40px;height:40px;border-radius:50%">M</div><div class="grow"><b>Mara</b><div class="muted">2nd floor, Haus B · 6 shares</div></div></div>
       <div class="btn">Ask to pick up</div>
       <div class="muted" style="text-align:center">Your email stays private</div>
-      <div class="note" style="top:196px;right:-6px">Trust cues above the button: look of the food + who gives it</div>
     </div>
-    <div class="why"><b>Why</b>P1: trust and the look of the food decide if she takes it. Photo, condition and neighbor identity come before contact. No public email.</div>
+    <div class="why"><b>Note</b>Trust cues above the button: look of the food + who gives it<br><br><b>Why</b>P1: trust and the look of the food decide if she takes it. Photo, condition and neighbor identity come before contact. No public email.</div>
   </div>
   <div class="arrow">→</div>
 
@@ -94,10 +92,8 @@
       <div class="btn">Send request</div>
       <div class="box" style="margin-top:6px"><b>Request sent ✓</b><div class="muted">Mara gets a notification. Pickup spot is shown once she accepts.</div></div>
       <div class="box"><b>Status</b><div class="row"><span class="chip on">Sent</span>→<span class="chip">Accepted</span>→<span class="chip">Picked up</span></div></div>
-      <div class="toast"><span>Request sent to Mara</span><span>OK</span></div>
-      <div class="note" style="top:96px;right:-6px">Visible status at every step (H1)</div>
     </div>
-    <div class="why"><b>Why</b>Week 2 H1 + H4: confirmation you can see, no email exposed. Strange-feeling exchange gets a soft script ("Can I come now?").</div>
+    <div class="why"><b>Note</b>Visible status at every step (H1)<br><br><b>Why</b>Week 2 H1 + H4: confirmation you can see, no email exposed. Strange-feeling exchange gets a soft script ("Can I come now?").</div>
   </div>
   <div class="arrow">→</div>
 
@@ -113,9 +109,8 @@
       <div class="chips"><span class="chip">Focaccia</span><span class="chip">Apples</span></div>
       <div class="muted">Step 2: condition + allergens (required)<br>Step 3: when + where, then Post</div>
       <div class="btn" style="margin-top:auto">Next</div>
-      <div class="note" style="top:150px;right:-6px">Photo first, one thing per screen: under 30 seconds</div>
     </div>
-    <div class="why"><b>Why</b>P1: throws food away, no easy way to offer it. Lower effort. Allergens + condition are required (H4, trust).</div>
+    <div class="why"><b>Note</b>Photo first, one thing per screen: under 30 seconds<br><br><b>Why</b>P1: throws food away, no easy way to offer it. Lower effort. Allergens + condition are required (H4, trust).</div>
   </div>
   <div class="arrow">→</div>
 
@@ -129,9 +124,8 @@
       <div class="box"><b>Share in your building group</b><div class="muted">Send link by WhatsApp</div></div>
       <div class="tabs"><span>Feed</span><span class="on">My offers</span><span>Requests</span></div>
       <div class="toast"><span>Marked as taken</span><span><u>Undo</u></span></div>
-      <div class="note" style="top:96px;right:-6px">Mark taken / delete with undo (H3)</div>
     </div>
-    <div class="why"><b>Why</b>Week 2 H3: no way to edit or close a listing. WhatsApp link: P1 never finds out about offers, so push them to chats people already use.</div>
+    <div class="why"><b>Note</b>Mark taken / delete with undo (H3)<br><br><b>Why</b>Week 2 H3: no way to edit or close a listing. WhatsApp link: P1 never finds out about offers, so push them to chats people already use.</div>
   </div>
 
 </div>
