@@ -85,6 +85,15 @@
   .req { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:8px 10px; background:var(--warn); border-radius:8px; font-size:13px; }
   footer { margin-top:28px; font-size:12px; color:var(--muted); }
   .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+  @media (min-width:900px) {
+    .app, nav div { width:min(1040px,100%); }
+    .fab { right:max(16px,calc(50% - 504px)); }
+    .list { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; }
+    .list > .empty { grid-column:1 / -1; }
+    h1 { font-size:40px; }
+    dialog { width:min(640px,calc(100% - 20px)); }
+    .hero { height:260px; }
+  }
   @media (prefers-reduced-motion:reduce) { * { transition:none !important; animation:none !important; } }
 </style>
 </head>
@@ -110,7 +119,7 @@
 <div id="toast-host" role="status" aria-live="polite"></div>
 
 <script>
-const KEY = "kiezkorb-v2";
+const KEY = "kiezkorb-v2.1";
 const H = 3600000;
 const IMG = {
   tom:"https://images.unsplash.com/photo-1546094096-0df4bcaaa337?auto=format&fit=crop&w=600&q=70",
@@ -127,11 +136,11 @@ const MSGS = ["Can I come now?","I can come in 1 hour","I can come tonight"];
 const seed = () => {
   const now = Date.now();
   return { offers:[
-    { id:"s1", name:"Pumpkin soup", category:"Prepared", amount:"2 jars", condition:"Made today", allergens:[], pickup:"Haus B, ground floor door", scope:"building", owner:"You", floor:"2nd floor", shares:6, mine:true, expiresAt:now+3*H, image:IMG.soup, status:"active", requests:[{ id:"r1", from:"Ana, 4th floor", msg:"Can I come now?", status:"pending" }] },
-    { id:"s2", name:"Rosemary focaccia", category:"Bakery", amount:"Half a tray", condition:"Made today", allergens:["Gluten"], pickup:"Haus B, 4th floor landing", scope:"building", owner:"Lena", floor:"4th floor", shares:11, expiresAt:now+5*H, image:IMG.foc, status:"active", requests:[] },
-    { id:"s3", name:"Balcony tomatoes", category:"Produce", amount:"8 tomatoes", condition:"Fresh, unopened", allergens:[], pickup:"Haus B, bike room", scope:"building", owner:"Amir", floor:"1st floor", shares:3, expiresAt:now+1*H, image:IMG.tom, status:"active", requests:[] },
-    { id:"s4", name:"Garden apples", category:"Produce", amount:"1 bag", condition:"Some marks, fine inside", allergens:[], pickup:"Görlitzer Park, main gate", scope:"nearby", owner:"Jonas", floor:"Görlitzer Kiez", shares:2, expiresAt:now+8*H, image:IMG.app, status:"active", requests:[] },
-    { id:"s5", name:"Cooked chickpeas", category:"Prepared", amount:"3 portions", condition:"Made today", allergens:["Celery"], pickup:"Kottbusser Tor, café entrance", scope:"nearby", owner:"Sami", floor:"Kotti Kiez", shares:4, expiresAt:now+6*H, image:IMG.chk, status:"active", requests:[] }
+    { id:"s1", name:"Pumpkin soup", category:"Prepared", amount:"2 jars", description:"Pumpkin, coconut milk and ginger. Vegan. Just heat it up. The jars go back to me, please.", condition:"Made today", allergens:[], pickup:"Haus B, ground floor door", scope:"building", owner:"You", floor:"2nd floor", shares:6, mine:true, expiresAt:now+3*H, image:IMG.soup, status:"active", requests:[{ id:"r1", from:"Ana, 4th floor", msg:"Can I come now?", status:"pending" }] },
+    { id:"s2", name:"Rosemary focaccia", category:"Bakery", amount:"Half a tray", description:"Baked this morning with wheat flour, olive oil and fresh rosemary. Still soft.", condition:"Made today", allergens:["Gluten"], pickup:"Haus B, 4th floor landing", scope:"building", owner:"Lena", floor:"4th floor", shares:11, expiresAt:now+5*H, image:IMG.foc, status:"active", requests:[] },
+    { id:"s3", name:"Balcony tomatoes", category:"Produce", amount:"8 tomatoes", description:"Ripe and sweet from my balcony, no pesticides. Good for sauce or salad.", condition:"Fresh, unopened", allergens:[], pickup:"Haus B, bike room", scope:"building", owner:"Amir", floor:"1st floor", shares:3, expiresAt:now+1*H, image:IMG.tom, status:"active", requests:[] },
+    { id:"s4", name:"Garden apples", category:"Produce", amount:"1 bag", description:"Picked yesterday. Some have marks, perfect inside. Good for baking or eating.", condition:"Some marks, fine inside", allergens:[], pickup:"Görlitzer Park, main gate", scope:"nearby", owner:"Jonas", floor:"Görlitzer Kiez", shares:2, expiresAt:now+8*H, image:IMG.app, status:"active", requests:[] },
+    { id:"s5", name:"Cooked chickpeas", category:"Prepared", amount:"3 portions", description:"Cooked with cumin and lemon, left over from today's family lunch. Vegan.", condition:"Made today", allergens:["Celery"], pickup:"Kottbusser Tor, café entrance", scope:"nearby", owner:"Sami", floor:"Kotti Kiez", shares:4, expiresAt:now+6*H, image:IMG.chk, status:"active", requests:[] }
   ], myReqs:[] };
 };
 let S; try { S = JSON.parse(localStorage.getItem(KEY)) || seed(); } catch { S = seed(); }
@@ -184,6 +193,7 @@ const card = (o) => `
 
 function renderMine() {
   const mine = S.offers.filter((o) => o.mine && alive(o));
+  const past = S.offers.filter((o) => o.mine && !alive(o) && o.status !== "deleted");
   return `<h1>My offers</h1><p class="sub">${mine.length} active. Close an offer as soon as the food is gone.</p>
   <div class="list">${mine.map((o) => {
     const pend = o.requests.filter((r) => r.status === "pending");
@@ -197,7 +207,12 @@ function renderMine() {
         <a class="btn sm sec" style="display:inline-flex;align-items:center;text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(`Free food in our building: ${o.name} (${o.amount}), ${timeTxt(o)}. Ask on Kiezkorb.`)}">Share on WhatsApp</a>
         <button class="btn sm sec" type="button" data-del="${o.id}">Delete</button>
       </div></div>`;
-  }).join("") || '<div class="empty"><b>No active offers</b>Tap "Offer food" to share something in under a minute.</div>'}</div>`;
+  }).join("") || '<div class="empty"><b>No active offers</b>Tap "Offer food" to share something in under a minute.</div>'}</div>
+  <h2 style="margin:28px 0 10px">History</h2>
+  <div class="list">${past.map((o) => {
+    const who = o.requests.find((r) => r.status === "accepted");
+    return `<div class="ow"><div class="ow-top">${photo(o, "ph")}<div><b>${esc(o.name)}</b><div class="meta">${esc(o.amount)} · ${o.status === "taken" ? "Taken" : "Expired, nobody took it"}${who ? ` by ${esc(who.from)}` : ""}</div></div></div></div>`;
+  }).join("") || '<p class="meta">Offers you close or that expire show up here.</p>'}</div>`;
 }
 
 function renderReqs() {
@@ -231,6 +246,7 @@ function openDetail(id) {
     <div class="dh"><h2 id="d-title">${esc(o.name)}</h2><button class="x" type="button" data-close aria-label="Close">×</button></div>
     ${photo(o, "hero")}
     <div class="tags"><span class="tag time">${timeTxt(o)}</span><span class="tag">${esc(o.amount)}</span></div>
+    ${o.description ? `<div class="box"><b>About this food</b>${esc(o.description)}</div>` : ""}
     <div class="box"><b>Condition</b>${esc(o.condition)}</div>
     <div class="box"><b>Allergens</b><div class="tags">${allergenTags(o)}</div></div>
     <div class="box giver"><span class="av" aria-hidden="true">${esc(o.owner[0])}</span><div><b style="text-transform:none;letter-spacing:0;font-size:15px;color:var(--ink)">${o.mine ? "You" : esc(o.owner)}</b><div class="meta">${esc(o.floor)} · ${o.shares} shares so far</div></div></div>
@@ -252,7 +268,7 @@ function openDetail(id) {
 
 /* ---------- wizard ---------- */
 let W;
-function openWizard() { W = { step:1, photo:"", name:"", category:"Prepared", amount:"", condition:"", allergens:[], none:false, hours:4, pickup:"", scope:"building" }; drawWizard(); $("#wizard").showModal(); }
+function openWizard() { W = { step:1, photo:"", name:"", category:"Prepared", amount:"", condition:"", allergens:[], none:false, description:"", hours:4, pickup:"", scope:"building" }; drawWizard(); $("#wizard").showModal(); }
 function drawWizard() {
   const w = $("#wizard"), s = W.step;
   const recent = [...new Set(S.offers.filter((o) => o.mine).map((o) => o.name))].slice(0, 3);
@@ -270,7 +286,8 @@ function drawWizard() {
       <fieldset class="field"><legend>Allergens (required)</legend><div class="opts">
         <label><input type="checkbox" id="none" ${W.none ? "checked" : ""}>None known</label>
         ${ALLERGENS.map((a) => `<label><input type="checkbox" name="al" value="${a}" ${W.allergens.includes(a) ? "checked" : ""} ${W.none ? "disabled" : ""}>${a}</label>`).join("")}</div>
-        <p class="hint">Pick every allergen it contains, or "None known". Neighbors rely on this.</p></fieldset>` : ""}
+        <p class="hint">Pick every allergen it contains, or "None known". Neighbors rely on this.</p></fieldset>
+      <div class="field"><label for="d">Details and ingredients (optional)</label><textarea id="d" maxlength="180" rows="3" placeholder="e.g. Made with coconut milk, no nuts. Bring a container.">${esc(W.description)}</textarea></div>` : ""}
     ${s === 3 ? `
       <div class="field"><label for="h">Available for</label><select id="h">${[2,4,8,24].map((h) => `<option value="${h}" ${W.hours === h ? "selected" : ""}>${h} hours</option>`).join("")}</select></div>
       <div class="field"><label for="p">Pickup spot</label><input type="text" id="p" maxlength="60" value="${esc(W.pickup)}" placeholder="e.g. Haus B, ground floor door"><p class="hint">Only shown to the neighbor you accept.</p></div>
@@ -289,7 +306,7 @@ function drawWizard() {
       img.onload = () => { const c = document.createElement("canvas"), k = Math.min(1, 640 / img.width); c.width = img.width * k; c.height = img.height * k; c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); W.photo = c.toDataURL("image/jpeg", .7); URL.revokeObjectURL(url); readStep1(); drawWizard(); };
       img.src = url;
     };
-    f.querySelectorAll("[data-again]").forEach((b) => b.onclick = () => { readStep1(); W.name = b.dataset.again; const p = S.offers.find((o) => o.mine && o.name === W.name); if (p) { W.amount = p.amount; W.category = p.category; W.photo = p.image || W.photo; } drawWizard(); });
+    f.querySelectorAll("[data-again]").forEach((b) => b.onclick = () => { readStep1(); W.name = b.dataset.again; const p = S.offers.find((o) => o.mine && o.name === W.name); if (p) { W.description = p.description || ""; W.amount = p.amount; W.category = p.category; W.photo = p.image || W.photo; } drawWizard(); });
   }
   if (s === 2) $("#none").onchange = (e) => { W.none = e.target.checked; if (W.none) W.allergens = []; readStep2(); drawWizard(); };
   if (s > 1) $("#back").onclick = () => { read(); W.step--; drawWizard(); };
@@ -301,12 +318,12 @@ function drawWizard() {
     if (s === 2 && !W.none && !W.allergens.length) return err("Choose the allergens, or \"None known\".");
     if (s === 3 && !W.pickup.trim()) return err("Add a pickup spot.");
     if (s < 3) { W.step++; drawWizard(); return; }
-    const o = { id:"o" + Date.now(), name:W.name.trim(), category:W.category, amount:W.amount.trim(), condition:W.condition, allergens:W.allergens, pickup:W.pickup.trim(), scope:W.scope, owner:"You", floor:"Your offer", shares:6, mine:true, expiresAt:Date.now() + W.hours * H, image:W.photo, status:"active", requests:[] };
+    const o = { id:"o" + Date.now(), name:W.name.trim(), category:W.category, amount:W.amount.trim(), description:W.description.trim(), condition:W.condition, allergens:W.allergens, pickup:W.pickup.trim(), scope:W.scope, owner:"You", floor:"Your offer", shares:6, mine:true, expiresAt:Date.now() + W.hours * H, image:W.photo, status:"active", requests:[] };
     S.offers.unshift(o); save(); w.close(); view = "mine"; render();
     toast(`"${o.name}" is live for ${W.hours} hours`);
   };
   function readStep1() { if (!$("#n")) return; W.name = $("#n").value; W.amount = $("#a").value; W.category = $("#c").value; }
-  function readStep2() { const c = f.querySelector("[name=cond]:checked"); if (c) W.condition = c.value; if (!W.none) W.allergens = [...f.querySelectorAll("[name=al]:checked")].map((x) => x.value); }
+  function readStep2() { W.description = $("#d").value; const c = f.querySelector("[name=cond]:checked"); if (c) W.condition = c.value; if (!W.none) W.allergens = [...f.querySelectorAll("[name=al]:checked")].map((x) => x.value); }
   function read() { if (s === 1) readStep1(); if (s === 2) readStep2(); if (s === 3) { W.hours = Number($("#h").value); W.pickup = $("#p").value; W.scope = f.querySelector("[name=sc]:checked").value; } }
   const first = f.querySelector("input:not(.sr),select"); if (first) first.focus({ preventScroll:true });
 }
